@@ -1,0 +1,45 @@
+---
+- hosts: all
+  remote_user: root
+  become: true
+
+  tasks:
+  - name: adding a new user
+    user:
+      name: reguser
+      password: ''
+      shell: /bin/bash
+      create_home: true
+      home: /home/reguser
+
+  - name: give sudo privileges to user in Ubuntu
+    shell:
+      "usermod -aG sudo reguser"
+    when: ansible_distribution in ["Ubuntu"]
+
+  - name: give sudo privileges to user in Rocky
+    shell:
+      "usermod -aG wheel reguser"
+    when: ansible_distribution in ["Rocky Linux", "Rocky", "Rocky Enterprise Software Foundation"]
+
+  - name: move .ssh to new user's home directory
+    copy:
+      remote_src: yes
+      src: .ssh/authorized_keys
+      dest: /home/reguser/.ssh/authorized_keys
+      owner: reguser
+      group: reguser
+
+#  - name: disable root ssh login
+#    become: true
+#    lineinfile:
+#      dest: /etc/ssh/sshd_config
+ #     regexp: '^PermitRootLogin'
+  #    line: "PermitRootLogin no"
+   #   state: present
+
+ # - name: restart ssh
+  #  become: true
+   # service:
+    #  name: sshd
+     # state: restarted
