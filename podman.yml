@@ -1,0 +1,27 @@
+---
+- hosts: all
+  become: true
+
+  tasks:
+    - name: install podman on Ubuntu
+      apt:
+        name: podman
+        state: present
+      when: ansible_distribution in ["Ubuntu"]
+
+    - name: install podman on Rocky
+      yum:
+        name: podman
+        state: present
+      when: ansible_distribution in ["Rocky Linux", "Rocky", "Rocky Enterprise Software Foundation"]
+
+    - name: pull http:2-alpine image from dockerhub
+      podman_image:
+        name: docker.io/httpd
+        tag: 2-alpine
+
+    - name: run pulled image
+      containers.podman.podman_container:
+        name: lab4-podman
+        image: docker.io/http:2-alpine
+        state: started

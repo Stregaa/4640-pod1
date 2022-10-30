@@ -30,16 +30,16 @@
       owner: reguser
       group: reguser
 
-#  - name: disable root ssh login
-#    become: true
-#    lineinfile:
-#      dest: /etc/ssh/sshd_config
- #     regexp: '^PermitRootLogin'
-  #    line: "PermitRootLogin no"
-   #   state: present
+  - name: disable root ssh login
+    become: true
+    lineinfile:
+      dest: /etc/ssh/sshd_config
+      regexp: '^PermitRootLogin'
+      line: "PermitRootLogin no"
+      state: present
 
- # - name: restart ssh
-  #  become: true
-   # service:
-    #  name: sshd
-     # state: restarted
+  - name: restart ssh
+    become: true
+    service:
+      name: sshd
+      state: restarted
